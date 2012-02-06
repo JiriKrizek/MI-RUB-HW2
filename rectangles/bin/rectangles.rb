@@ -45,11 +45,7 @@ class String
 
   # Returns true if string contains non negative number
   def is_non_negative_number?
-    if is_number? and Float(self)>=0
-      true
-    else
-      false
-    end
+    is_number? and Float(self)>=0
   end
 end
 
