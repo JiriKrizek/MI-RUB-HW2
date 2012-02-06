@@ -1,6 +1,7 @@
 class Rectangle
     attr_reader :a, :x1, :x2, :y1, :y2
 
+    # Initialize new rectangle with given values
     def initialize(a,x,y)
       @a = Float(a)
       @x1 = Float(x)-(@a/2)
@@ -9,6 +10,7 @@ class Rectangle
       @y2 = y1+@a
     end
 
+    # Returns true if rectangles are intersected (or at least touch by one corner)
     def overlap?(rect)
       return false unless rect.is_a? Rectangle
 
@@ -17,13 +19,31 @@ class Rectangle
               @y1 <= rect.y2 && 
               @y2 >= rect.y1)
     end
+
+    # Returns rectangle area
+    def area
+      @a*@a
+    end
+
+    # Returns only overlap area 
+    def overlap_area(rect)
+      if !overlap?(rect)
+        return 0
+      end
+
+      x_overlap = ([rect.x2,@x2].min) - ([rect.x1, @x1].max)
+      y_overlap = ([rect.y2,@y2].min) - ([rect.y1, @y1].max)
+      overlap = x_overlap * y_overlap
+    end
 end
 
 class String
+  # Returns true if string contains number
   def is_number?
     true if Float(self) rescue false
   end
 
+  # Returns true if string contains non negative number
   def is_non_negative_number?
     if is_number? and Float(self)>=0
       true
@@ -36,10 +56,20 @@ end
 class Main
   INPUT_ERROR="Spatny vstup."
 
-  def input
+  def run
     r1 = inputRect("prvniho")
     r2 = inputRect("druheho")
-    [r1, r2]
+
+    if !r1.overlap?(r2)
+      print "Ctverce se ani nedotykaji."
+      exit
+    end
+
+    overlap_area = r1.overlap_area(r2)
+
+    sum_area = r1.area + r2.area - overlap_area
+
+    print "Obsah sjednoceni dvou ctvercu je #{sum_area}."
   end
 
 private
@@ -57,7 +87,6 @@ private
     input_error unless y.is_number?
 
     rect = Rectangle.new(a,x,y)
-#    print "Obsah sjednoceni dvou ctvercu je ."
   end
 
   def input_error
@@ -67,23 +96,4 @@ private
 end
 
 m = Main.new
-Array rect = m.input
-r1=rect[0]
-r2=rect[1]
-
-if !r1.overlap?(r2)
-  print "Ctverce se ani nedotykaji."
-  exit
-end
-
-p r2
-p r1
-x_overlap = ([r2.x2,r1.x2].min) - ([r2.x1, r1.x1].max)
-p x_overlap
-y_overlap = ([r2.y2,r1.y2].min) - ([r2.y1, r1.y1].max)
-p y_overlap
-overlap = x_overlap * y_overlap
-p overlap
-
-sum = r1.a*r1.a + r2.a*r2.a - overlap
-p sum
+m.run
